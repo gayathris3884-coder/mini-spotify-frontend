@@ -1,4 +1,4 @@
-require('dotenv').config(); // load your keys
+require('dotenv').config(); // Load Cloudinary keys
 const express = require('express');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
@@ -8,6 +8,11 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Default route
+app.get('/', (req, res) => {
+  res.send('🎵 Mini Spotify Backend is Live! Use /upload to add songs or /songs to list songs.');
+});
 
 // Connect to Cloudinary
 cloudinary.config({
@@ -43,15 +48,18 @@ app.get('/songs', async (req, res) => {
       resource_type: 'video',
       max_results: 100
     });
+
     const songs = result.resources.map(s => ({
       name: s.public_id.split('/')[1],
       url: s.secure_url
     }));
+
     res.json(songs);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
